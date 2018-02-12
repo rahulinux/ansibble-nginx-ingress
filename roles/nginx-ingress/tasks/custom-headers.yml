@@ -1,0 +1,9 @@
+---
+  - name: Deploy Nginx Ingress ConfigMap
+    k8s_v1_config_map:
+      name: custom-headers
+      namespace: '{{nginx_ingress_ns}}'
+      labels:
+        app: ingress-nginx
+      data:
+        X-CLIENT-CERT-DN: "$ssl_client_s_dn"

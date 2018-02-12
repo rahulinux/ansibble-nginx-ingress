@@ -1,0 +1,5 @@
+---
+  - name: Deploy Nginx Ingress ConfigMap
+    k8s_v1_config_map:
+      name: udp-services
+      namespace: '{{nginx_ingress_ns}}'

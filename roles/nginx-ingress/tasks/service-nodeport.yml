@@ -1,0 +1,19 @@
+---
+  - name: Create Nginx Ingress Service
+    k8s_v1_service:
+      name: ingress-nginx
+      namespace: '{{nginx_ingress_ns}}'
+      spec_type: NodePort
+      spec_ports:
+        - name: http
+          port: 80
+          targetPort: 80
+          nodePort: '{{nginx_ingress_http_port}}'
+          protocol: TCP
+        - name: https
+          port: 443
+          targetPort: 443
+          nodePort: '{{nginx_ingress_https_port}}'
+          protocol: TCP
+      spec_selector:
+        app: ingress-nginx

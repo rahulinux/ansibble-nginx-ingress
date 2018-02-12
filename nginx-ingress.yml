@@ -1,0 +1,16 @@
+---
+- hosts: localhost
+  gather_facts: no
+  vars:
+    # deployment_type: deployment
+    deployment_type: daemonset
+    nginx_ingress_ns: ingress-nginx
+    nginx_ingress_class: nginx
+    nginx_ingress_replicas: 3
+    nginx_ingress_http_port: 32080
+    nginx_ingress_https_port: 32443
+    nginx_ingress_image: quay.io/kubernetes-ingress-controller/nginx-ingress-controller:0.9.0
+  roles:
+    - role: ansible.kubernetes-modules
+      install_python_requirements: no
+    - role: nginx-ingress

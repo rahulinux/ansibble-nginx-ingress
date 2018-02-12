@@ -1,0 +1,16 @@
+---
+  - name: Create Ngins Ingress namespace
+    k8s_v1_namespace:
+      name: '{{nginx_ingress_ns}}'
+  - include_tasks: default-backend.yml
+  - include_tasks: configmap.yml
+  - include_tasks: custom-headers.yml
+  - include_tasks: tcp-services-configmap.yml
+  - include_tasks: udp-services-configmap.yml
+  - include_tasks: rbac.yml
+  - include_tasks: deployment-with-rbac.yml
+    when: deployment_type == 'deployment'
+  - include_tasks: service-nodeport.yml
+    when: deployment_type == 'deployment'
+  - include_tasks: daemonset-with-rbac.yml
+    when: deployment_type == 'daemonset'

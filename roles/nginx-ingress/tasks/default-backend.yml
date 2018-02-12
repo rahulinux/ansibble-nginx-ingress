@@ -1,0 +1,60 @@
+---
+  - name: Deploy Nginx Ingress default backend
+    k8s_apps_v1beta1_deployment:
+      name: default-http-backend
+      namespace: '{{nginx_ingress_ns}}'
+      labels:
+        app: default-http-backend
+      spec_replicas: 1
+      spec_template_metadata_labels:
+        app: default-http-backend
+      spec_template_spec_termination_grace_period_seconds: 60
+      spec_template_spec_containers:
+        - name: default-http-backend
+          # Any image is permissable as long as:
+          # 1. It serves a 404 page at /
+          # 2. It serves 200 on a /healthz endpoint
+          image: gcr.io/google_containers/defaultbackend:1.4
+          livenessProbe:
+            httpGet:
+              path: /healthz
+              port: 8080
+              scheme: HTTP
+            initialDelaySeconds: 30
+            timeoutSeconds: 5
+          ports:
+          - containerPort: 8080
+          resources:
+            limits:
+              cpu: 10m
+              memory: 20Mi
+            requests:
+              cpu: 10m
+              memory: 20Mi
+
+# ---
+# apiVersion: v1
+# kind: Service
+# metadata:
+#   name: default-http-backend
+#   namespace: ingress-nginx
+#   labels:
+#     app: default-http-backend
+# spec:
+#   ports:
+#   - port: 80
+#     targetPort: 8080
+#   selector:
+#     app: default-http-backend
+
+  - name: Create Nginx Ingress default backend Service
+    k8s_v1_service:
+      name: default-http-backend
+      namespace: '{{nginx_ingress_ns}}'
+      labels:
+        app: default-http-backend
+      spec_ports:
+        - port: 80
+          targetPort: 8080
+      spec_selector:
+        app: default-http-backend
